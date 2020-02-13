@@ -32,6 +32,29 @@ router.post('/register', (req, res) => {
                 error: "Failed to create user/password."
             })
         })
+});
+
+router.post('/login', (req, res) => {
+    let {username, password} = req.body;
+
+    users.findBy({username})
+        .first()
+        .then(user => {
+            if (user && bcrypt.compareSync(password, user.password)) {
+                res.status(200).json({
+                    message: `Welcome ${user.userName}!`
+                })
+            } else {
+                res.status(401).json({
+                    error: 'Invalid Credentials'
+                })
+            }
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: 'Unable to login.'
+            })
+        })
 })
 
 module.exports = router;
