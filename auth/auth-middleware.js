@@ -1,15 +1,15 @@
 const users = require('../users/usersModel');
 const bcrypt = require('bcryptjs');
 
-module.exports = (req, res, next) => {
-    const {userName, password} = req.headers
+module.exports = function auth(req, res, next) {
+    const {username, password} = req.headers;
 
-    if (userName && password) {
-        users.findBy({userName})
+    if (username && password) {
+        users.findBy({username})
             .first()
             .then(user => {
                 if (user && bcrypt.compareSync(password, user.password)) {
-                    res.status(200)
+                    next();
                 } else {
                     res.status(401).json({
                         error: 'Invalid Credentials.'
@@ -21,5 +21,9 @@ module.exports = (req, res, next) => {
                     error: 'Please provide valid credentials.'
                 })
             })
+    } else {
+        res.status(400).json({
+            error: 'Please provide valid credentials.'
+        })
     }
 }
