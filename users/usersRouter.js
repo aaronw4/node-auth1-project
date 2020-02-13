@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 
 const users = require('./usersModel');
 
@@ -15,5 +16,21 @@ router.get('/', (req, res) => {
             })
         })
 });
+
+router.post('/register', (req, res) => {
+    let user = req.body;
+    const hash = bcrypt.hashSync(user.password, 10);
+    user.password = hash;
+
+    users.add(user)
+        .then(info => {
+            res.status(201).json(info);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: "Failed to create user/password."
+            })
+        })
+})
 
 module.exports = router;
