@@ -8,13 +8,13 @@ const router = express.Router();
 
 router.get('/', auth, (req, res) => {
     users.find()
-        .then(users => {
+        .then(users => {  
             res.status(200).json(users);
         })
         .catch(err => {
             res.status(500).json({
                 error: 'Failed to get users.'
-            })
+            });
         })
 });
 
@@ -41,6 +41,7 @@ router.post('/login', (req, res) => {
         .first()
         .then(user => {
             if (user && bcrypt.compareSync(password, user.password)) {
+                req.session.user = user;
                 res.status(200).json({
                     message: `Welcome ${user.userName}!`
                 })
@@ -55,6 +56,20 @@ router.post('/login', (req, res) => {
                 error: 'Unable to login.'
             })
         })
-})
+});
+
+router.get('/logout', (req, res) => {
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) {
+                res.send('Error logging out.')
+            } else {
+                res.send('Logged out successfully.')
+            }
+        })
+    } else {
+        res.send('Already logged out.')
+    }
+});
 
 module.exports = router;
