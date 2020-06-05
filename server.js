@@ -32,7 +32,6 @@ const corsOptions = {
     methods: ['GET', 'POST']
 };
 
-
 const server = express();
 
 server.use(express.json());
