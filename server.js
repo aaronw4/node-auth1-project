@@ -26,9 +26,17 @@ const sessionOptions = {
     })
 }
 
+const corsOptions = {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST']
+};
+
+
 const server = express();
 
 server.use(express.json());
+server.use(cors(corsOptions));
 server.use(helmet());
 server.use(session(sessionOptions));
 
